@@ -1,0 +1,18 @@
+---
+- name: clean tfs
+  command: rm -r /home/otsmanager/forgottenserver/
+  
+- name: clean www
+  command: rm -r /home/otsmanager/www/
+  
+- name: make forgottenserver
+  file: path=/home/otsmanager/forgottenserver owner=otsmanager group=otsmanager mode=0755 state=directory
+  
+- name: make www
+  file: path=/home/otsmanager/www owner=otsmanager group=otsmanager mode=0755 state=directory
+    
+- name: make public_html
+  file: path=/home/otsmanager/www/public_html owner=otsmanager group=otsmanager mode=0755 state=directory
+  
+
+

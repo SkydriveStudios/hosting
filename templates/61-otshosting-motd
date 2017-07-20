@@ -1,0 +1,6 @@
+#!/bin/bash
+echo ""
+echo -e '             \E[37;42mBienvenido al hosting preconfigurado de Skydrive Studios C.A'"\033[1m\033[0m"
+echo ""
+echo "Si necesitas soporte tecnico puedes crear un ticket en https://clientes.skydrivestudios.com/"
+echo "Cualquier duda, ayuda o pedido que desees realizar lo puedes hacer por https://www.facebook.com/SkydriveStudios/"

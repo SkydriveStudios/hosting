@@ -1,0 +1,56 @@
+---
+- name: Install packages needed to compile TFS
+  apt: pkg={{ item }} state=latest
+  with_items:
+   - git
+   - cmake
+   - build-essential
+   - libgmp3-dev
+   - libmysqlclient-dev
+   - libboost-system-dev
+   - liblua5.2-dev
+   - libpugixml-dev
+   - libluajit-5.1-dev
+   - libboost-iostreams-dev
+
+- name: Download latest TFS from git
+  git: repo=https://github.com/otland/forgottenserver.git
+       dest=/home/otsmanager/forgottenserver
+  become: true
+  become_user: otsmanager
+
+- name: Generate random MySQL password
+  command: openssl rand -base64 18
+  register: randompass
+
+- name: Create database user for TFS
+  mysql_user: name=forgottenserver password="{{randompass.stdout}}" priv=forgottenserver.*:ALL state=present check_implicit_admin=yes
+
+- name: Create database for TFS
+  mysql_db: name=forgottenserver state=present
+
+- name: Import database for TFS
+  mysql_db: name=forgottenserver state=import target=/home/otsmanager/forgottenserver/schema.sql
+
+- name: Put password for database in config.lua
+  lineinfile: dest=/home/otsmanager/forgottenserver/config.lua regexp="^mysqlPass" line='mysqlPass = "{{randompass.stdout}}"'
+
+- name: Put server's IP address in config.lua
+  lineinfile: dest=/home/otsmanager/forgottenserver/config.lua regexp="^ip =" line='ip = "{{ansible_default_ipv4.address}}"'
+
+- name: Create build directory
+  file: path=/home/otsmanager/forgottenserver/build owner=otsmanager group=otsmanager mode=0755 state=directory
+  become: true
+  become_user: otsmanager
+
+- name: Cmake forgottenserver source
+  command: cmake .. chdir=/home/otsmanager/forgottenserver/build
+  tags: compile
+  become: true
+  become_user: otsmanager
+
+- name: Compile forgottenserver source
+  command: make chdir=/home/otsmanager/forgottenserver/build
+  tags: compile
+  become: true
+  become_user: otsmanager

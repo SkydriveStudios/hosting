@@ -1,0 +1,12 @@
+[Unit]
+Description=The Forgotten Server
+After=network.target mysql.service
+
+[Service]
+Type=simple
+ExecStart=/home/otsmanager/forgottenserver/build/tfs
+WorkingDirectory=/home/otsmanager/forgottenserver
+Restart=always
+
+[Install]
+WantedBy=default.target
